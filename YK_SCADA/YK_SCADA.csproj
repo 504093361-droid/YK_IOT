@@ -1,0 +1,96 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+    <UseWindowsForms>False</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="新文件夹1\**" />
+    <EmbeddedResource Remove="新文件夹1\**" />
+    <None Remove="新文件夹1\**" />
+    <Page Remove="新文件夹1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="imgs\browse.png" />
+    <None Remove="imgs\edit.png" />
+    <None Remove="imgs\menu.png" />
+    <None Remove="imgs\remove.png" />
+    <None Remove="imgs\交班记录.png" />
+    <None Remove="imgs\任务列表.png" />
+    <None Remove="imgs\删除.png" />
+    <None Remove="imgs\喂料机装饰.png" />
+    <None Remove="imgs\强制完成.png" />
+    <None Remove="imgs\报警记录.png" />
+    <None Remove="imgs\数字框.png" />
+    <None Remove="imgs\标题.png" />
+    <None Remove="imgs\甄陶.png" />
+    <None Remove="imgs\皮带机.png" />
+    <None Remove="imgs\系统设置.png" />
+    <None Remove="imgs\背景.png" />
+    <None Remove="imgs\背景dark.png" />
+    <None Remove="imgs\背景deepdark.png" />
+    <None Remove="imgs\过程检测.png" />
+    <None Remove="imgs\顶部.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HandyControl" Version="3.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="imgs\edit.png" />
+    <Resource Include="imgs\menu.png" />
+    <Resource Include="imgs\remove.png" />
+    <Resource Include="imgs\browse.png" />
+    <Resource Include="imgs\交班记录.png" />
+    <Resource Include="imgs\任务列表.png" />
+    <Resource Include="imgs\删除.png" />
+    <Resource Include="imgs\喂料机装饰.png" />
+    <Resource Include="imgs\强制完成.png" />
+    <Resource Include="imgs\报警记录.png" />
+    <Resource Include="imgs\数字框.png" />
+    <Resource Include="imgs\标题.png" />
+    <Resource Include="imgs\甄陶.png" />
+    <Resource Include="imgs\皮带机.png" />
+    <Resource Include="imgs\系统设置.png" />
+    <Resource Include="imgs\背景.png" />
+    <Resource Include="imgs\背景dark.png" />
+    <Resource Include="imgs\背景deepdark.png" />
+    <Resource Include="imgs\过程检测.png" />
+    <Resource Include="imgs\顶部.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="Model\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Share\Share.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\Config.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

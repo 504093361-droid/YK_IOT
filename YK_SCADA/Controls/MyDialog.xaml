@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="YK_SCADA.Controls.MyDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:YK_SCADA.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="400"
+    Height="300"
+    mc:Ignorable="d">
+
+
+    <Border Background="White" CornerRadius="10">
+        <StackPanel Orientation="Vertical">
+            <Button
+                Width="35"
+                Height="30"
+                Margin="0,2,2,0"
+                HorizontalAlignment="Right"
+                hc:BorderElement.CornerRadius="10"
+                Background="White"
+                BorderBrush="Tomato"
+                BorderThickness="3"
+                Command="hc:ControlCommands.Close"
+                Content="X"
+                FontWeight="DemiBold"
+                Foreground="Tomato" />
+            <Label
+                Padding="0"
+                BorderThickness="0"
+                Content="温馨提示"
+                FontSize="20"
+                FontWeight="DemiBold"
+                Foreground="Tomato" />
+            <TextBox
+                x:Name="input_flnum"
+                Width="300"
+                Margin="20"
+                hc:InfoElement.Placeholder="请填写"
+                hc:TitleElement.Title="粉料编号"
+                hc:TitleElement.TitlePlacement="Left"
+                BorderBrush="Tomato"
+                BorderThickness="1"
+                FontSize="16"
+                Foreground="Tomato"
+                Style="{StaticResource TextBoxExtend}" />
+
+            <TextBox
+                x:Name="input_flname"
+                Width="300"
+                Margin="20"
+                hc:InfoElement.Placeholder="请填写"
+                hc:TitleElement.Title="粉料名称"
+                hc:TitleElement.TitlePlacement="Left"
+                BorderBrush="Tomato"
+                BorderThickness="1"
+                FontSize="16"
+                Foreground="Tomato"
+                Style="{StaticResource TextBoxExtend}" />
+
+            <Button
+                Width="100"
+                Height="40"
+                Margin="20"
+                Background="Tomato"
+                Click="Button_Click"
+                Content="提交"
+                Foreground="White" />
+
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="../Contracts/Contracts.csproj" Id="a01d06ae-5652-480d-9483-0b4aa59d4c22" />
+  <Project Path="../DeviceSimulator/DeviceSimulator.csproj" Id="08df552b-6707-4e61-a7d3-b349a85c2d34" />
+  <Project Path="../KafkaConsumer/KafkaConsumer.csproj" Id="5d97f0d5-a089-4b04-a91b-62a4548af062" />
+  <Project Path="../MesConsumer/MesConsumer.csproj" Id="4a71d902-c81a-4975-bc8e-c1ba08377cc2" />
+  <Project Path="../ScadaEdge/ScadaEdge.csproj" Id="03bb742e-489a-4d64-86b0-fd08292a94af" />
+  <Project Path="../Share/Share.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="YK_SCADA.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>
