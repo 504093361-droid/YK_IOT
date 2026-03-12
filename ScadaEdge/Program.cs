@@ -35,9 +35,11 @@ mqttClient.ApplicationMessageReceivedAsync += async e =>
     {
         // 读取 MQTT 消息体
         var topic = e.ApplicationMessage.Topic;//先看主题，是哪种类型的消息
+      
         var payloadBytes = e.ApplicationMessage.Payload.ToArray();
         var json = Encoding.UTF8.GetString(payloadBytes);
 
+     
 
         if (topic.StartsWith("device/raw/"))
         {
@@ -76,12 +78,17 @@ mqttClient.ApplicationMessageReceivedAsync += async e =>
         }
 
         // =========================
-        // B. 命令链：cmd/site1/line1/+
+        // B. 命令链：cmd/site1/line1/+                           cmd/site1/line1/mixer01
         // =========================
-        if (topic.StartsWith("cmd/site1/line1/"))
+        else if (topic.StartsWith("cmd/site1/line1/"))
         {
             var command = JsonSerializer.Deserialize<CommandMessage>(json);
-            if (command == null) return;
+            if (command == null)
+            {
+                Console.WriteLine("[ERROR  ] 无法解析命令消息");
+                return;
+            }
+
 
             Console.WriteLine($"[CMD-IN ] Topic={topic}");
             Console.WriteLine($"         {json}");
@@ -117,6 +124,7 @@ mqttClient.ApplicationMessageReceivedAsync += async e =>
 // 4. 订阅原始数据
 var subscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
     .WithTopicFilter(f => f.WithTopic("device/raw/#"))
+    .WithTopicFilter(f => f.WithTopic("cmd/site1/line1/#"))
     .Build();
 
 await mqttClient.SubscribeAsync(subscribeOptions, CancellationToken.None);
