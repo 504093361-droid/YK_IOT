@@ -14,6 +14,9 @@ namespace ScadaEdge.Services;
 /// 3. 模拟执行
 /// 4. 返回执行结果
 /// </summary>
+using Contracts.Models;
+
+
 public static class CommandProcessor
 {
     /// <summary>
@@ -21,7 +24,6 @@ public static class CommandProcessor
     /// </summary>
     public static CommandResultMessage Handle(CommandMessage command)
     {
-        // 1. 先构造一个默认回执
         var result = new CommandResultMessage
         {
             CommandId = command.CommandId,
@@ -30,7 +32,6 @@ public static class CommandProcessor
             SourceSystem = command.SourceSystem
         };
 
-        // 2. 基础校验：设备不能为空
         if (string.IsNullOrWhiteSpace(command.DeviceId))
         {
             result.Status = CommandStatus.Rejected;
@@ -38,7 +39,6 @@ public static class CommandProcessor
             return result;
         }
 
-        // 3. 按命令类型模拟执行
         switch (command.CommandType)
         {
             case CommandType.SetParameter:
@@ -56,7 +56,6 @@ public static class CommandProcessor
                     return result;
                 }
 
-                // 模拟成功执行
                 result.Status = CommandStatus.Succeeded;
                 result.Message = $"参数 {command.ParameterName} 已设置为 {command.ParameterValue}";
                 return result;
@@ -81,5 +80,33 @@ public static class CommandProcessor
                 result.Message = "不支持的命令类型。";
                 return result;
         }
+    }
+
+    /// <summary>
+    /// 根据命令及结果生成事件消息
+    /// </summary>
+    public static EventMessage CreateCommandEvent(CommandMessage command, CommandResultMessage result)
+    {
+        var eventType = result.Status == CommandStatus.Succeeded
+            ? EventType.CommandExecuted
+            : EventType.CommandFailed;
+
+        var severity = result.Status == CommandStatus.Succeeded
+            ? EventSeverity.Info
+            : EventSeverity.Error;
+
+        return new EventMessage
+        {
+            EventId = Guid.NewGuid().ToString("N"),
+            Namespace = $"event/site1/line1/{command.DeviceId}",
+            DeviceId = command.DeviceId,
+            EventType = eventType,
+            Severity = severity,
+            EventName = command.CommandType.ToString(),
+            Message = result.Message,
+            SourceSystem = "ScadaEdge",
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            RelatedCommandId = command.CommandId
+        };
     }
 }

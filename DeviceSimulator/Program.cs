@@ -2,6 +2,7 @@
 using Contracts.Models;
 using System.Text.Json;
 using MQTTnet;
+using Contracts;
 
 var mqttFactory = new MqttClientFactory();
 
@@ -40,7 +41,7 @@ while (true)
     };
 
     // 8. 序列化为 JSON
-    var payload = JsonSerializer.Serialize(rawData);
+    var payload = JsonSerializer.Serialize(rawData,JsonHelper.DefaultOptions);
 
     // 9. 构建 MQTT 消息
     var mqttMessage = new MqttApplicationMessageBuilder()
@@ -51,7 +52,7 @@ while (true)
     // 10. 发布到原始数据 Topic
     await mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
 
-    Console.WriteLine($"[RAW-OUT] {payload}");
+    Console.WriteLine($"[RAW-BroadCast] {payload}");
 
     // 11. 每秒发送一次
     await Task.Delay(3000);
@@ -62,7 +63,7 @@ while (true)
 double GenerateTemperature(Random random)
 {
     // 10% 概率生成异常值
-    if (random.Next(1, 11) > 4)
+    if (random.Next(1, 11) > 7)
     {
         return random.Next(-200, 500);
     }

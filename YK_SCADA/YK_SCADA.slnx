@@ -6,7 +6,9 @@
   <Project Path="../CommandSender/CommandSender.csproj" Id="d802e270-f3a1-43e6-860e-f35789abcfce" />
   <Project Path="../Contracts/Contracts.csproj" Id="a01d06ae-5652-480d-9483-0b4aa59d4c22" />
   <Project Path="../DeviceSimulator/DeviceSimulator.csproj" Id="08df552b-6707-4e61-a7d3-b349a85c2d34" />
+  <Project Path="../EventConsumer/EventConsumer.csproj" Id="1af8a90c-eac2-4dc9-a5e2-9ef063bed85f" />
   <Project Path="../KafkaConsumer/KafkaConsumer.csproj" Id="5d97f0d5-a089-4b04-a91b-62a4548af062" />
+  <Project Path="../KafkaEventConsumer/KafkaEventConsumer.csproj" Id="ed7187d6-1611-4e8e-9b15-f3e82caf5dff" />
   <Project Path="../MesConsumer/MesConsumer.csproj" Id="4a71d902-c81a-4975-bc8e-c1ba08377cc2" />
   <Project Path="../ScadaEdge/ScadaEdge.csproj" Id="03bb742e-489a-4d64-86b0-fd08292a94af" />
   <Project Path="../Share/Share.csproj">
