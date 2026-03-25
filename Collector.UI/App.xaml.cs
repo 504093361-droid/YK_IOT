@@ -1,4 +1,9 @@
-﻿using HandyControl.Controls;
+﻿
+using Collector.UI.Service;
+using Collector.UI.ViewModel;
+using Collector.UI.Views;
+using Contracts.Interface;
+using HandyControl.Controls;
 using IWshRuntimeLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -8,12 +13,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using YK_SCADA.Tools;
-using YK_SCADA.ViewModel;
-using YK_SCADA.Views;
 
 
-namespace YK_SCADA
+namespace Collector.UI
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -64,7 +66,8 @@ namespace YK_SCADA
 
             services.AddScoped<Page1ViewModel>();
 
-            services.AddSqlSugar(); //注册sqlsguar
+            // 注册基础服务
+            services.AddSingleton<IMqttService, MqttService>();
 
 
 
@@ -79,8 +82,7 @@ namespace YK_SCADA
             var mainview = Services.GetService<MainWindow>();
 
 #if DEBUG
-            mainview.Width = 920;
-            mainview.Height = 550;
+      
             mainview.WindowState = WindowState.Normal;
 
 #elif !DEBUG
@@ -89,7 +91,7 @@ namespace YK_SCADA
 
             mainview.WindowState = WindowState.Maximized;
 
-            CheckApplicationMutex("YK_SCADA", "YK_SCADA");
+            CheckApplicationMutex("Collector.UI", "Collector.UI");
 #endif
 
 
@@ -114,37 +116,13 @@ namespace YK_SCADA
         private async Task ActiveHsl()
         {
             //能用10年
-            //4c30051d-fb61-48c2-979b-2ff92a40faff
             if (!HslCommunication.Authorization.SetAuthorizationCode("4b86f3fc-f650-3b08-5924-b0f8278d6ed2"))
             {
                 Growl.WarningGlobal("激活Hsl失败");
             }
         }
 
-        public void CreateShortcutInStartup()
-        {
-            try
-            {
-                // 获取启动文件夹的路径
-                string startupFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
-                string shortcutPath = System.IO.Path.Combine(startupFolderPath, "YK_SCADA.lnk");
 
-
-                // 设置目标路径为程序的EXE路径
-                string targetPath = @INIHelper.Read("targetPath"); // 程序路径
-
-                // 创建快捷方式
-                WshShell shell = new WshShell();
-                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
-                shortcut.Description = "喂料铲车程序";
-                shortcut.TargetPath = targetPath;
-                shortcut.Save();
-            }
-            catch (Exception ex)
-            {
-                loger.Error(ex.Message);
-            }
-        }
 
 
 

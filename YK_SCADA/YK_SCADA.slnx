@@ -3,6 +3,14 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
+  <Folder Name="/Docs/">
+    <File Path="C:/Users/张英男/Desktop/ForReport/MOM、IOT相关/TopicsName.xlsx" />
+  </Folder>
+  <Project Path="../Collector.Contracts/Collector.Contracts.csproj" Id="af7fed61-b53a-4747-85e4-6e5c7afb9483" />
+  <Project Path="../Collector.Edge/Collector.Edge.csproj" Id="e320da18-37b5-4233-861e-a771d6da7c70" />
+  <Project Path="../Collector.UI/Collector.UI.csproj" Id="7d755d9c-0d90-4e82-91f6-a3384e688f53">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
   <Project Path="../CommandSender/CommandSender.csproj" Id="d802e270-f3a1-43e6-860e-f35789abcfce" />
   <Project Path="../Contracts/Contracts.csproj" Id="a01d06ae-5652-480d-9483-0b4aa59d4c22" />
   <Project Path="../DeviceSimulator/DeviceSimulator.csproj" Id="08df552b-6707-4e61-a7d3-b349a85c2d34" />
