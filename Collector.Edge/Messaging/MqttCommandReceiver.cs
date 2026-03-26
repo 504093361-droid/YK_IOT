@@ -1,10 +1,9 @@
 ﻿using Collector.Contracts.Topics;
 using Collector.Edge.Control;
+using Contracts.Interface; // 引入 IMqttService
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MQTTnet;
 using System;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,80 +12,56 @@ namespace Collector.Edge.Messaging
     public class MqttCommandReceiver : BackgroundService
     {
         private readonly IEdgeController _controller;
+        private readonly IMqttService _mqttService; // 注入大管家
         private readonly ILogger<MqttCommandReceiver> _logger;
-        private IMqttClient _mqttClient;
 
-        // 注入 Control 大脑
-        public MqttCommandReceiver(IEdgeController controller, ILogger<MqttCommandReceiver> logger)
+        public MqttCommandReceiver(IEdgeController controller, IMqttService mqttService, ILogger<MqttCommandReceiver> logger)
         {
             _controller = controller;
+            _mqttService = mqttService;
             _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var factory = new MqttClientFactory();
-            _mqttClient = factory.CreateMqttClient();
-
-            // 1. 注册消息接收事件
-            _mqttClient.ApplicationMessageReceivedAsync += async e =>
+            // 因为我们需要用到 Subscribe 和 Event，而 IMqttService 接口里没有
+            // 所以我们把它强制转换为它真正的实体 EdgeMqttService
+            if (_mqttService is EdgeMqttService edgeMqtt)
             {
-                string topic = e.ApplicationMessage.Topic;
-                string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-
-           
-
-                // 用最原始的 Console 打印，防止 Logger 级别被屏蔽
-                Console.WriteLine($"\n[超级调试] 收到来自 Broker 的消息！");
-                Console.WriteLine($"[超级调试] 主题: {topic}");
-                Console.WriteLine($"[超级调试] 载荷: {payload} 字符\n");
-
-
-                // 判断是否为配置下发主题 (如果用的是 Contracts 里的常量，这里直接替换)
-                if (topic == CollectorTopics.ConfigUpdate)
+                // 1. 挂载接收事件
+                edgeMqtt.OnMessageReceived += async (topic, payload) =>
                 {
-                    _logger.LogInformation("耳朵 (Messaging) 听到配置更新主题消息。");
-                    // 甩给大脑处理，耳朵不负责解析
-                    await _controller.HandleConfigUpdatedAsync(payload);
-                }
-            };
+                    Console.WriteLine($"\n[超级调试] 听到消息 -> 主题: {topic}");
 
-            // 2. 配置连接选项 (注意 Edge 端的 ClientId 应该是固定的)
-            var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("127.0.0.1", 1883)
-                .WithClientId("ScadaEdge_MainNode_01")
-                .WithCleanSession(false) // 工业端推荐 false，结合 Qos 保留离线消息
-                .Build();
+                    if (topic == CollectorTopics.ConfigUpdate)
+                    {
+                        _logger.LogInformation("耳朵 (Messaging) 听到配置更新主题消息，甩给大脑...");
+                        await _controller.HandleConfigUpdatedAsync(payload);
+                    }
 
-            // 3. 连接并订阅
-            try
-            {
-                await _mqttClient.ConnectAsync(options, stoppingToken);
-                _logger.LogInformation("Edge 成功连接至 MQTT Broker！");
+                    // 🟢 场景 2：收到启停控制指令
+                    else if (topic == CollectorTopics.EngineControl)
+                    {
+                        if (payload.ToLower() == "stop")
+                        {
+                            _logger.LogWarning("🚨 接收到紧急停止指令！即将停止所有采集任务...");
+                            await _controller.StopEngineAsync(); // 呼叫大脑停止
+                        }
+                    }
 
-                var subscribeOptions = new MqttClientSubscribeOptionsBuilder()
-                    .WithTopicFilter(f => f.WithTopic(CollectorTopics.ConfigUpdate))
-                    .Build();
+                };
 
-                await _mqttClient.SubscribeAsync(subscribeOptions, stoppingToken);
-                _logger.LogInformation("Edge 已订阅配置更新主题，等待 UI 下发...");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Edge 连接 MQTT Broker 失败！");
+                // 2. 主动发起连接并订阅配置主题
+                await edgeMqtt.ConnectAsync();
+                await edgeMqtt.SubscribeAsync(CollectorTopics.ConfigUpdate);
+                await edgeMqtt.SubscribeAsync(CollectorTopics.EngineControl);
+                _logger.LogInformation("耳朵已佩戴完毕，等待 UI 下发配置...");
             }
 
-            // 4. 保持后台任务不死
+            // 保持后台任务运行
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(1000, stoppingToken);
-            }
-
-            // 优雅退出
-            if (_mqttClient.IsConnected)
-            {
-                await _mqttClient.DisconnectAsync(new MqttClientDisconnectOptions(), CancellationToken.None);
             }
         }
     }

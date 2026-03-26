@@ -14,6 +14,8 @@ namespace Collector.Edge.Engine
 
         // 热重载（当收到新配置时：先全停，再全启）
         Task ReloadAsync();
+        //停止所有
+        Task StopAllAsync();
     }
 
 

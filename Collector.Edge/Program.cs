@@ -9,6 +9,7 @@ using Collector.Edge.Engine;
 using Collector.Edge.Messaging;
 using Collector.Edge.Processing;
 using Collector.Edge.Publishing;
+using Contracts.Interface;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -47,10 +48,13 @@ builder.ConfigureServices((hostContext, services) =>
     // 注册 Control 层 (单例：全局大脑)
     services.AddSingleton<IEdgeController, EdgeController>();
 
+    // 这行代码必须有，确保全 Edge 共享这唯一的一个 MQTT 连接！
+    services.AddSingleton<IMqttService, EdgeMqttService>();
+
     services.AddSingleton<IMqttPublisher, MqttPublisher>();
     // 🟢 新增：注册车间主任 (单例，统管全局 Worker)
     services.AddSingleton<ICollectionEngine, CollectionEngine>();
-
+  
     // 注册 Messaging 层 (作为后台长驻服务跑起来)
     services.AddHostedService<MqttCommandReceiver>();
 });

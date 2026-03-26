@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Collector.Contracts\Collector.Contracts.csproj" />
+    <ProjectReference Include="..\Contracts\Contracts.csproj" />
   </ItemGroup>
 
 </Project>

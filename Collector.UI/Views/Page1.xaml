@@ -8,11 +8,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Collector.UI.ViewModel"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
     d:DataContext="{d:DesignInstance Type=vm:Page1ViewModel}"
     d:DesignHeight="720"
-    d:DesignWidth="1280"
+    d:DesignWidth="1400"
     Background="#F3F4F6"
     mc:Ignorable="d">
+
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding PageLoadedCommand}" />
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
 
     <UserControl.Resources>
         <ObjectDataProvider x:Key="ProtocolEnumProvider" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
@@ -26,35 +33,36 @@
                 <x:Type TypeName="models:DataTypeEnum" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
         <Style x:Key="GridTextBlockStyle" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="6,0,6,0" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="4,0,4,0" />
+            <Setter Property="FontSize" Value="12" />
         </Style>
 
         <Style x:Key="GridTextBoxStyle" TargetType="TextBox">
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Padding" Value="3,0,3,0" />
+            <Setter Property="Padding" Value="2,0,2,0" />
             <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Margin" Value="3,-2,3,-2" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="2,-1,2,-1" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Background" Value="#F2F6FC" />
         </Style>
 
         <Style x:Key="CardBorderStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#DCDFE6" Opacity="0.5"/>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Direction="270" Color="#DCDFE6" Opacity="0.5"/>
                 </Setter.Value>
             </Setter>
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="20">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="5*" />
@@ -64,15 +72,15 @@
 
         <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}">
             <StackPanel Orientation="Horizontal">
-             
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="数据采集配置中心" FontSize="20" FontWeight="Bold" Foreground="#303133" VerticalAlignment="Center" Margin="0,0,30,0"/>
-                    <TextBlock Text="Youkai_Scada_Collector" FontSize="14" FontWeight="Bold" Foreground="#303133" VerticalAlignment="Center" Margin="0,0,30,0"/>
+                    <TextBlock Text="数据采集配置中心" FontSize="16" FontWeight="Bold" Foreground="#303133" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <TextBlock Text="Youkai_Scada_Collector" FontSize="12" FontWeight="Bold" Foreground="#909399" VerticalAlignment="Center" Margin="0,0,20,0"/>
                 </StackPanel>
-                <Button Content="➕ 新增设备" Command="{Binding AddDeviceCommand}" Width="120" Height="36" Margin="0,0,15,0" Background="#409EFF" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                <Button Content="📂 读取配置" Command="{Binding LoadConfigCommand}" Width="120" Height="36" Margin="0,0,15,0" Background="#909399" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                <Button Content="💾 保存配置" Command="{Binding SaveConfigCommand}" Width="120" Height="36" Margin="0,0,30,0" Background="#E6A23C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
-                <Button Content="▶ 启动采集引擎" Command="{Binding StartCollectCommand}" Width="150" Height="36" Background="#67C23A" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="➕ 新增设备" Command="{Binding AddDeviceCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,10,0" Background="#409EFF" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="📂 读取配置" Command="{Binding LoadConfigCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,10,0" Background="#909399" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="💾 保存配置" Command="{Binding SaveConfigCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,20,0" Background="#E6A23C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="⏹ 停止采集" Command="{Binding StopCollectCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,10,0" Background="#F56C6C" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="▶ 启动/更新" Command="{Binding StartCollectCommand}" Width="110" Height="28" FontSize="12" Background="#67C23A" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </StackPanel>
         </Border>
 
@@ -82,80 +90,188 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="设备列表 (选中下方展开点位)" FontSize="16" FontWeight="SemiBold" Foreground="#606266" Margin="0,0,0,10"/>
+                <Grid Margin="0,0,0,3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="设备列表" FontSize="11" FontWeight="Bold" Foreground="#606266" VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="车间筛选：" FontSize="11" Foreground="#909399" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <ComboBox ItemsSource="{Binding AvailableWorkshops}" 
+                  SelectedItem="{Binding SelectedWorkshopFilter}" 
+                  Width="100" Height="22" FontSize="11" Padding="5,0"
+                  BorderBrush="#DCDFE6" Background="#F4F4F5"/>
+                    </StackPanel>
+                </Grid>
 
                 <DataGrid Grid.Row="1" 
-                          ItemsSource="{Binding DeviceConfigs}" 
+                          ItemsSource="{Binding FilteredDeviceConfigs}" 
                           SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
                           AutoGenerateColumns="False" CanUserAddRows="False" 
-                          Background="White" RowHeight="40" ColumnHeaderHeight="45"
+                          Background="White" RowHeight="30" ColumnHeaderHeight="32" FontSize="12"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#EBEEF5"
                           BorderThickness="1" BorderBrush="#E4E7ED"
-                          HeadersVisibility="Column">
+                          HeadersVisibility="Column" Cursor="">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="设备ID" Binding="{Binding DeviceId}" Width="120" IsReadOnly="True" ElementStyle="{StaticResource GridTextBlockStyle}"/>
-                        <DataGridTextColumn Header="设备名称" Binding="{Binding DeviceName, UpdateSourceTrigger=PropertyChanged}" Width="180" 
+                        <DataGridTextColumn Header="设备ID" Binding="{Binding DeviceId}" Width="110" IsReadOnly="True" ElementStyle="{StaticResource GridTextBlockStyle}"/>
+                        <DataGridTextColumn Header="设备名称" Binding="{Binding DeviceName, UpdateSourceTrigger=PropertyChanged}" Width="140" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-
+                        <DataGridTextColumn Header="所属车间" Binding="{Binding Workshop, UpdateSourceTrigger=PropertyChanged}" Width="80" 
+                            ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
                         <DataGridComboBoxColumn Header="协议类型" 
-                        SelectedItemBinding="{Binding ProtocolType, UpdateSourceTrigger=PropertyChanged}" 
-                        ItemsSource="{Binding Source={StaticResource ProtocolEnumProvider}}" 
-                        Width="140" />
+                                                SelectedItemBinding="{Binding ProtocolType, UpdateSourceTrigger=PropertyChanged}" 
+                                                ItemsSource="{Binding Source={StaticResource ProtocolEnumProvider}}" 
+                                                Width="110" />
 
-                        <DataGridTextColumn Header="IP地址" Binding="{Binding IpAddress, UpdateSourceTrigger=PropertyChanged}" Width="160" 
+                        <DataGridTextColumn Header="IP地址" Binding="{Binding IpAddress, UpdateSourceTrigger=PropertyChanged}" Width="120" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-                        <DataGridTextColumn Header="端口" Binding="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Width="100" 
+                        <DataGridTextColumn Header="端口" Binding="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Width="70" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-                        <DataGridTextColumn Header="扫描周期(ms)" Binding="{Binding ScanIntervalMs, UpdateSourceTrigger=PropertyChanged}" Width="120" 
+                        <DataGridTextColumn Header="扫描(ms)" Binding="{Binding ScanIntervalMs, UpdateSourceTrigger=PropertyChanged}" Width="70" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-
-                        <DataGridTemplateColumn Header="操作" Width="100">
+                        <DataGridTemplateColumn Header="操作" Width="80"  >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="删除" Command="{Binding DataContext.DeleteDeviceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Foreground="#F56C6C" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Content="删除" FontSize="12"  Command="{Binding DataContext.DeleteDeviceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Foreground="#F56C6C" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="运行状态" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="3" Padding="6,2" Margin="4,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="#F4F4F5"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding StatusCode}" Value="1">
+                                                        <Setter Property="Background" Value="#F0F9EB"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StatusCode}" Value="-1">
+                                                        <Setter Property="Background" Value="#FEF0F0"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <TextBlock Text="{Binding WorkerStatus}" FontSize="11" FontWeight="SemiBold" 
+                                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding WorkerStatus}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#909399"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding StatusCode}" Value="1">
+                                                            <Setter Property="Foreground" Value="#67C23A"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding StatusCode}" Value="-1">
+                                                            <Setter Property="Foreground" Value="#F56C6C"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                       
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </Border>
 
-        <Grid Grid.Row="2" Margin="0,0,0,15" IsEnabled="{Binding IsDeviceSelected}">
+        <Grid Grid.Row="2" Margin="0,0,0,10" IsEnabled="{Binding IsDeviceSelected}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Border Background="#ECF5FF" BorderBrush="#D9ECFF" BorderThickness="1" CornerRadius="4" Padding="10,5" Margin="0,0,15,0">
-                    <TextBlock Text="{Binding SelectedDevice.DeviceName, StringFormat='当前配置点位归属: {0}'}" Foreground="#409EFF" FontSize="15" FontWeight="SemiBold"/>
+                <Border Background="#ECF5FF" BorderBrush="#D9ECFF" BorderThickness="1" CornerRadius="4" Padding="8,4" Margin="0,0,10,0">
+                    <TextBlock Text="{Binding SelectedDevice.DeviceName, StringFormat='当前配置点位归属: {0}'}" Foreground="#409EFF" FontSize="13" FontWeight="SemiBold"/>
                 </Border>
-                <Button Content="➕ 添加采集点位" Command="{Binding AddPointCommand}" Width="140" Height="34" Background="#409EFF" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="➕ 添加采集点位" FontSize="12" Command="{Binding AddPointCommand}" Width="120" Height="28" Background="#409EFF" Foreground="White" BorderThickness="0" Cursor="Hand"/>
             </StackPanel>
         </Grid>
 
         <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Margin="0" IsEnabled="{Binding IsDeviceSelected}">
             <DataGrid ItemsSource="{Binding SelectedDevice.Points}" 
                       AutoGenerateColumns="False" CanUserAddRows="False" 
-                      Background="White" RowHeight="40" ColumnHeaderHeight="40"
+                      Background="White" RowHeight="28" ColumnHeaderHeight="32" FontSize="12"
                       GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#EBEEF5"
                       BorderThickness="1" BorderBrush="#E4E7ED"
                       HeadersVisibility="Column">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="点位ID" Binding="{Binding PointId}" Width="120" IsReadOnly="True" ElementStyle="{StaticResource GridTextBlockStyle}"/>
-                    <DataGridTextColumn Header="点位名称" Binding="{Binding PointName, UpdateSourceTrigger=PropertyChanged}" Width="180" 
+                    <DataGridTextColumn Header="点位ID" Binding="{Binding PointId}" Width="90" IsReadOnly="True" ElementStyle="{StaticResource GridTextBlockStyle}"/>
+                    <DataGridTextColumn Header="点位名称" Binding="{Binding PointName, UpdateSourceTrigger=PropertyChanged}" Width="130" 
                                         ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-                    <DataGridTextColumn Header="寄存器地址" Binding="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Width="160" 
+                    <DataGridTextColumn Header="寄存器地址" Binding="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Width="110" 
                                         ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-
                     <DataGridComboBoxColumn Header="数据类型" 
-                        SelectedItemBinding="{Binding DataType, UpdateSourceTrigger=PropertyChanged}" 
-                        ItemsSource="{Binding Source={StaticResource DataTypeEnumProvider}}" 
-                        Width="140" />
+                                            SelectedItemBinding="{Binding DataType, UpdateSourceTrigger=PropertyChanged}" 
+                                            ItemsSource="{Binding Source={StaticResource DataTypeEnumProvider}}" 
+                                            Width="100" />
+                    <DataGridTextColumn Header="长度" Binding="{Binding Length, UpdateSourceTrigger=PropertyChanged}" Width="60">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource GridTextBlockStyle}">
+                                <Setter Property="Opacity" Value="0.3"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataType}" Value="{x:Static models:DataTypeEnum.String}">
+                                        <Setter Property="Opacity" Value="1.0"/>
+                                        <Setter Property="Foreground" Value="#409EFF"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
 
-                    <DataGridTemplateColumn Header="操作" Width="100">
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource GridTextBoxStyle}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Setter Property="Background" Value="#E4E7ED"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataType}" Value="{x:Static models:DataTypeEnum.String}">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                        <Setter Property="Background" Value="#F2F6FC"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="当前值" Width="90">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="移除" Command="{Binding DataContext.DeletePointCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Foreground="#F56C6C" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                                <TextBlock Text="{Binding CurrentValue}" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="6,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#409EFF"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSuccess}" Value="False">
+                                                    <Setter Property="Foreground" Value="#F56C6C"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="最后更新" Binding="{Binding LastUpdateTime, StringFormat={}{0:HH:mm:ss.fff}}" Width="110" IsReadOnly="True" ElementStyle="{StaticResource GridTextBlockStyle}"/>
+                    <DataGridTemplateColumn Header="操作" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="移除" FontSize="12" Command="{Binding DataContext.DeletePointCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Foreground="#F56C6C" Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="异常诊断" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ErrorMessage}" Foreground="#F56C6C" FontSize="11" VerticalAlignment="Center" Margin="4,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding ErrorMessage}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

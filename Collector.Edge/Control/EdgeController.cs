@@ -70,6 +70,21 @@ namespace Collector.Edge.Control
 
         }
 
+
+        public async Task StopEngineAsync()
+        {
+            // 1. 调用 CollectionEngine 停止所有在跑的 Worker 线程
+            await _engine.StopAllAsync(); // 假设你之前写了这个方法，它内部调用了 worker.Stop() 和 cts.Cancel()
+
+            // 2. 🚨 极其关键的一步：清空配置指纹！
+            // 这样下次 UI 再次下发相同的配置时，哈希比对才会通过，引擎才会重新拉起！
+            _lastConfigHash = string.Empty;
+
+            _logger.LogInformation("✅ 所有采集任务已停止，引擎进入待命状态。");
+
+          
+        }
+
         // 辅助方法：计算字符串的 MD5 哈希
         private string CalculateHash(string input)
         {

@@ -41,7 +41,7 @@
                 return ReloadAsync(); // 启动的本质其实就是按最新配置拉起一波
             }
 
-            public Task StopAsync()
+            public async Task StopAsync()
             {
                 _logger.LogInformation("🛑 引擎总控收到 [停止] 指令，正在遣散所有 Worker...");
 
@@ -49,7 +49,7 @@
                 {
                     try
                     {
-                        kvp.Value.Stop();
+                     await   kvp.Value.StopAsync();
                     }
                     catch (Exception ex)
                     {
@@ -60,7 +60,7 @@
                 _workers.Clear();
                 _logger.LogInformation("✅ 所有采集 Worker 已安全停止。");
 
-                return Task.CompletedTask;
+              
             }
 
             public Task ReloadAsync()
@@ -99,6 +99,30 @@
 
                 return Task.CompletedTask;
             }
+
+
+        // 🟢 补全：真正的 StopAll 实现
+        public async Task StopAllAsync()
+        {
+            if (_workers.IsEmpty)
+            {
+                _logger.LogInformation("当前没有运行中的采集任务，无需停止。");
+                return;
+            }
+
+            _logger.LogWarning("🚨 收到紧急停止指令，车间主任开始强制遣散所有工人...");
+
+            // 收集所有工人的退出任务
+            var stopTasks = _workers.Values.Select(w => w.StopAsync());
+
+            // 🟢 核心：并行等待所有工人彻底死透！
+            await Task.WhenAll(stopTasks);
+
+            // 2. 彻底清空花名册
+            _workers.Clear();
+
+            _logger.LogInformation("🛑 所有车间采集流水线已全部清空并停止运转。");
         }
+    }
     }
 
