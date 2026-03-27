@@ -71,7 +71,7 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Cursor="">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="数据采集配置中心" FontSize="16" FontWeight="Bold" Foreground="#303133" VerticalAlignment="Center" Margin="0,0,20,0"/>
                     <TextBlock Text="Youkai_Scada_Collector" FontSize="12" FontWeight="Bold" Foreground="#909399" VerticalAlignment="Center" Margin="0,0,20,0"/>
@@ -79,6 +79,10 @@
                 <Button Content="➕ 新增设备" Command="{Binding AddDeviceCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,10,0" Background="#409EFF" Foreground="White" BorderThickness="0" Cursor="Hand"/>
                 <Button Content="📂 读取配置" Command="{Binding LoadConfigCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,10,0" Background="#909399" Foreground="White" BorderThickness="0" Cursor="Hand"/>
                 <Button Content="💾 保存配置" Command="{Binding SaveConfigCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,20,0" Background="#E6A23C" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+                <Button Content="📥 Excel导入" Command="{Binding ImportExcelCommand}" Width="90" Height="28" FontSize="12" Margin="0,0,5,0" Background="#E6A23C" Foreground="White" BorderThickness="0" Cursor="Hand" ToolTip="按模板导入设备与点位全量配置"/>
+                <Button Content="📄 下模板" Command="{Binding DownloadTemplateCommand}" Width="80" Height="28" FontSize="12" Margin="0,0,15,0" Background="#909399" Foreground="White" BorderThickness="0" Cursor="Hand"/>
+
+              
                 <Button Content="⏹ 停止采集" Command="{Binding StopCollectCommand}" Width="100" Height="28" FontSize="12" Margin="0,0,10,0" Background="#F56C6C" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
                 <Button Content="▶ 启动/更新" Command="{Binding StartCollectCommand}" Width="110" Height="28" FontSize="12" Background="#67C23A" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"/>
             </StackPanel>

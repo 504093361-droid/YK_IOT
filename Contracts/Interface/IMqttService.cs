@@ -21,5 +21,9 @@ namespace Contracts.Interface
 
         // 🟢 3. 新增：接收消息事件
         event Func<string, string, Task> OnMessageReceived;
+
+
+        // 🟢 新增：用于通知外部“连接/断开”状态的事件
+        event Action<bool> OnConnectionStatusChanged;
     }
 }

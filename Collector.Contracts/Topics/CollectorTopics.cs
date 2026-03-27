@@ -23,6 +23,7 @@ namespace Collector.Contracts.Topics
         public static string GetDeviceStatusTopic(string deviceId)
             => $"{Root}/status/{deviceId}";
 
+    
 
         // 🟢 新增：专门用于控制引擎启停的指令频道
         public const string EngineControl = "scada/engine/control";
