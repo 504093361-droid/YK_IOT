@@ -63,19 +63,19 @@
               
             }
 
-            public Task ReloadAsync()
+            public async Task ReloadAsync()
             {
                 _logger.LogInformation("🔄 引擎总控收到 [热重载] 指令...");
 
                 // 1. 先安全停止并清空当前所有的旧工人
-                StopAsync().Wait();
+              await StopAllAsync();
 
                 // 2. 从防弹档案柜 (ConfigManager) 里拿出最新的一批图纸
                 var configs = _configManager.GetCurrentConfigs();
                 if (configs == null || configs.Count == 0)
                 {
                     _logger.LogWarning("当前没有任何设备配置，引擎进入待机状态。");
-                    return Task.CompletedTask;
+                   
                 }
 
                 // 3. 按图纸逐个雇佣新工人，并分配给他们专属的日志记录器
@@ -97,7 +97,7 @@
 
                 _logger.LogInformation("🎉 引擎热重载完成！当前正在运行的 Worker 数量: {Count}", _workers.Count);
 
-                return Task.CompletedTask;
+               
             }
 
 

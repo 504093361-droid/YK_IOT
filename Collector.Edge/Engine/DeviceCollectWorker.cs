@@ -50,7 +50,7 @@ namespace Collector.Edge.Engine
             _cts = new CancellationTokenSource();
 
             // 启动后台轮询任务
-            Task.Run(() => PollingLoopAsync(_cts.Token), _cts.Token);
+          //  Task.Run(() => PollingLoopAsync(_cts.Token), _cts.Token);
 
             // 🟢 核心：把这个跑在后台的 Task 存起来，方便以后等待它结束
             _pollingTask = Task.Run(() => PollingLoopAsync(_cts.Token), _cts.Token);

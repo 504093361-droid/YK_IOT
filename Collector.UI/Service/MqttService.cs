@@ -88,7 +88,7 @@ namespace Collector.UI.Service
         }
 
         // 内部维护长连接的方法
-        private async Task ConnectAsync()
+        public  async Task ConnectAsync()
         {
             if (!_mqttClient.IsConnected)
             {

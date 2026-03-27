@@ -609,28 +609,32 @@ namespace Collector.UI.ViewModel
                     }
 
                     string deviceName = row["设备名称"].ToString().Trim();
+                        string workshopName = row.ContainsKey("所属车间") ? row["所属车间"]?.ToString()?.Trim() ?? "默认车间" : "默认车间";
 
-                    // 🟢 核心聚合逻辑：如果字典里还没这个设备，就先造一个出来！
-                    if (!tempDeviceDict.ContainsKey(deviceName))
-                    {
-                        // 解析协议枚举
-                        ProtocolTypeEnum protocol = ProtocolTypeEnum.ModbusTCP;
-                        if (row.ContainsKey("协议类型")) Enum.TryParse(row["协议类型"]?.ToString(), true, out protocol);
+                        // 🟢 核心重构：使用“车间+设备”作为聚合的主键，防止不同车间同名设备发生交叉污染！
+                        string aggregateKey = $"[{workshopName}]_{deviceName}";
 
-                        tempDeviceDict[deviceName] = new DeviceConfig
+
+                        // 🟢 核心聚合逻辑：如果字典里还没这个设备，就先造一个出来！
+                        if (!tempDeviceDict.ContainsKey(aggregateKey))
                         {
-                            DeviceId = $"PLC_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}",
-                            DeviceName = deviceName,
-                            Workshop = row.ContainsKey("所属车间") ? row["所属车间"]?.ToString() ?? "默认车间" : "默认车间",
-                            ProtocolType = protocol,
-                            IpAddress = row.ContainsKey("IP地址") ? row["IP地址"]?.ToString() ?? "127.0.0.1" : "127.0.0.1",
-                            Port = row.ContainsKey("端口") ? Convert.ToInt32(row["端口"] ?? 502) : 502,
-                            ScanIntervalMs = row.ContainsKey("扫描周期") ? Convert.ToInt32(row["扫描周期"] ?? 1000) : 1000,
-                        };
-                    }
+                            ProtocolTypeEnum protocol = ProtocolTypeEnum.ModbusTCP;
+                            if (row.ContainsKey("协议类型")) Enum.TryParse(row["协议类型"]?.ToString(), true, out protocol);
 
-                    // 🟢 给这个设备塞入当前行的点位
-                    DataTypeEnum dataType = DataTypeEnum.Int;
+                            tempDeviceDict[aggregateKey] = new DeviceConfig
+                            {
+                                DeviceId = $"PLC_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}",
+                                DeviceName = deviceName, // 真实名称依然保持纯净
+                                Workshop = workshopName, // 车间名
+                                ProtocolType = protocol,
+                                IpAddress = row.ContainsKey("IP地址") ? row["IP地址"]?.ToString() ?? "127.0.0.1" : "127.0.0.1",
+                                Port = row.ContainsKey("端口") ? Convert.ToInt32(row["端口"] ?? 502) : 502,
+                                ScanIntervalMs = row.ContainsKey("扫描周期") ? Convert.ToInt32(row["扫描周期"] ?? 1000) : 1000,
+                            };
+                        }
+
+                        // 🟢 给这个设备塞入当前行的点位
+                        DataTypeEnum dataType = DataTypeEnum.Int;
                     if (row.ContainsKey("数据类型")) Enum.TryParse(row["数据类型"]?.ToString(), true, out dataType);
 
                     ushort length = 0;
@@ -645,9 +649,9 @@ namespace Collector.UI.ViewModel
                         Length = length
                     };
 
-                    tempDeviceDict[deviceName].Points.Add(newPoint);
-                    addedPointsCount++;
-                }
+                        tempDeviceDict[aggregateKey].Points.Add(newPoint);
+                        addedPointsCount++;
+                    }
 
                     // 🟢 2. 根据操作员的选择，决定要不要清空数据源
                     if (dialogResult == System.Windows.MessageBoxResult.Yes)

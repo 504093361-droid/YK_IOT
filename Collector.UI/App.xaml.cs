@@ -82,6 +82,7 @@ namespace Collector.UI
             var mainview = Services.GetService<MainWindow>();
 
 #if DEBUG
+
       
             mainview.WindowState = WindowState.Normal;
 

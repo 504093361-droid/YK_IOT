@@ -24,12 +24,11 @@ namespace Collector.Edge.Messaging
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // 因为我们需要用到 Subscribe 和 Event，而 IMqttService 接口里没有
+           
             // 所以我们把它强制转换为它真正的实体 EdgeMqttService
-            if (_mqttService is EdgeMqttService edgeMqtt)
-            {
+          
                 // 1. 挂载接收事件
-                edgeMqtt.OnMessageReceived += async (topic, payload) =>
+                _mqttService.OnMessageReceived += async (topic, payload) =>
                 {
                     Console.WriteLine($"\n[超级调试] 听到消息 -> 主题: {topic}");
 
@@ -52,11 +51,11 @@ namespace Collector.Edge.Messaging
                 };
 
                 // 2. 主动发起连接并订阅配置主题
-                await edgeMqtt.ConnectAsync();
-                await edgeMqtt.SubscribeAsync(CollectorTopics.ConfigUpdate);
-                await edgeMqtt.SubscribeAsync(CollectorTopics.EngineControl);
+                await _mqttService.ConnectAsync();
+                await _mqttService.SubscribeAsync(CollectorTopics.ConfigUpdate);
+                await _mqttService.SubscribeAsync(CollectorTopics.EngineControl);
                 _logger.LogInformation("耳朵已佩戴完毕，等待 UI 下发配置...");
-            }
+            
 
             // 保持后台任务运行
             while (!stoppingToken.IsCancellationRequested)

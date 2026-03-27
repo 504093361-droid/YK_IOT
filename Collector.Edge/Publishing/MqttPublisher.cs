@@ -52,8 +52,19 @@ namespace Collector.Edge.Publishing
             try
             {
                 string topic = CollectorTopics.GetDeviceStatusTopic(deviceId);
+
+                // 🟢 优雅地使用 DTO 和序列化，彻底杜绝转义符 Bug
+                var statusMsg = new DeviceStatusMessage
+                {
+                    DeviceId = deviceId,
+                    Status = status,
+                    StatusCode = statuscode
+                };
+                string payload = JsonSerializer.Serialize(statusMsg);
+
+
                 // 🟢 JSON 里多加了一个 StatusCode 字段
-                string payload = $"{{\"DeviceId\":\"{deviceId}\", \"Status\":\"{status}\", \"StatusCode\":{statuscode}}}";
+              
 
                 // 🟢 发布状态心跳 (retain: true)
                 var result = await _mqttService.PublishAsync(topic, payload, retain: true);

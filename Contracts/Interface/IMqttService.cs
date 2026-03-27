@@ -15,7 +15,8 @@ namespace Contracts.Interface
         /// <returns>IsSuccess: 是否成功, ErrorMessage: 错误信息</returns>
         Task<(bool IsSuccess, string ErrorMessage)> PublishAsync(string topic, string payload, bool retain = false);
 
-
+        // 核心行为
+        Task ConnectAsync(); // 🟢 补全：允许调用方显式建立连接
         // 🟢 2. 新增：订阅方法
         Task SubscribeAsync(string topic);
 
