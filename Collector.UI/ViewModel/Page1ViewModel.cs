@@ -246,7 +246,7 @@ namespace Collector.UI.ViewModel
                
 
                 await _mqttService.SubscribeAsync(CollectorTopics.GetDeviceStatusTopic("+"));
-                await _mqttService.SubscribeAsync(CollectorTopics.GetDeviceRawDataTopic("+"));
+                await _mqttService.SubscribeAsync(CollectorTopics.GetDeviceStandDataTopic("+"));
 
                 // 🟢 1. 订阅连接状态变化事件
                 _mqttService.OnConnectionStatusChanged -= HandleMqttConnectionChanged;
@@ -389,21 +389,24 @@ namespace Collector.UI.ViewModel
                         }
                     }
                 }
-                else if (topic.Contains("/data/") && topic.EndsWith("/raw"))
+                else if (topic.Contains("/data/") && topic.EndsWith("/standard"))
                 {
-                    var rawMsg = JsonSerializer.Deserialize<RawMessage>(payload);
-                    if (rawMsg == null) return;
+                    var stdMsg = JsonSerializer.Deserialize<StandardPointData>(payload);
+                    if (stdMsg == null) return;
 
-                    var device = DeviceConfigs.FirstOrDefault(d => d.DeviceId == rawMsg.DeviceId);
+                    var device = DeviceConfigs.FirstOrDefault(d => d.DeviceId == stdMsg.DeviceId);
+
                     if (device != null)
                     {
-                        var point = device.Points.FirstOrDefault(p => p.PointId == rawMsg.PointId);
+                        var point = device.Points.FirstOrDefault(p => p.PointId == stdMsg.PointId);
                         if (point != null)
                         {
-                            point.CurrentValue = rawMsg.Value;
-                            point.LastUpdateTime = rawMsg.CollectTime;
-                            point.IsSuccess = rawMsg.IsSuccess;
-                            point.ErrorMessage = rawMsg.ErrorMessage;
+                            // 🟢 UI 同时装载生肉和熟肉！
+                            point.RawValue = stdMsg.RawValue;
+                            point.ProcessedValue = stdMsg.ProcessedValue;
+                            point.LastUpdateTime = stdMsg.CollectTime;
+                            point.IsSuccess = stdMsg.IsSuccess;
+                            point.ErrorMessage = stdMsg.ErrorMessage;
                         }
                     }
                 }
@@ -538,16 +541,16 @@ namespace Collector.UI.ViewModel
         {
             try
             {
-                // 🟢 构造工业级平铺模板，展示了如何把同设备的点位写在一起
-                var template = new[]
-                {
-                new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="192.168.0.10", 端口=102, 扫描周期=1000, 点位名称="温度1", 寄存器地址="MD100", 数据类型="Float", 长度=0 },
-                new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="192.168.0.10", 端口=102, 扫描周期=1000, 点位名称="运行状态", 寄存器地址="M10.0", 数据类型="Bool", 长度=0 },
-                new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="192.168.0.20", 端口=502, 扫描周期=500, 点位名称="当前电压", 寄存器地址="100", 数据类型="Int", 长度=0 },
-                new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="192.168.0.20", 端口=502, 扫描周期=500, 点位名称="产品条码", 寄存器地址="200", 数据类型="String", 长度=10 }
+                    // 🟢 构造工业级平铺模板，展示了如何把同设备的点位写在一起
+                    var template = new[]
+                   {
+                new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="192.168.0.10", 端口=102, 扫描周期=1000, 点位名称="实际温度", 寄存器地址="MD100", 数据类型="Float", 长度=0, 比例=0.1, 偏移=-50.0, 表达式="x * 1.5 + 10" },
+                new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="192.168.0.10", 端口=102, 扫描周期=1000, 点位名称="运行状态", 寄存器地址="M10.0", 数据类型="Bool", 长度=0, 比例=1.0, 偏移=0.0, 表达式="" },
+                new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="192.168.0.20", 端口=502, 扫描周期=500, 点位名称="当前电压", 寄存器地址="100", 数据类型="Int", 长度=0, 比例=1.0, 偏移=0.0, 表达式="" },
+                new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="192.168.0.20", 端口=502, 扫描周期=500, 点位名称="产品条码", 寄存器地址="200", 数据类型="String", 长度=10, 比例=1.0, 偏移=0.0, 表达式="" }
             };
 
-                MiniExcel.SaveAs(saveFileDialog.FileName, template);
+                    MiniExcel.SaveAs(saveFileDialog.FileName, template);
                 Growl.Success("模板下载成功！请严格按照模板的列名填写。");
             }
             catch (Exception ex)
@@ -640,14 +643,26 @@ namespace Collector.UI.ViewModel
                     ushort length = 0;
                     if (row.ContainsKey("长度") && row["长度"] != null) ushort.TryParse(row["长度"].ToString(), out length);
 
-                    var newPoint = new PointConfig
+                        // 🟢 新增：解析 比例 (k) 和 偏移 (b)，为了防呆，给个默认值 1.0 和 0.0
+                        double multiplier = 1.0;
+                        if (row.ContainsKey("比例") && row["比例"] != null) double.TryParse(row["比例"].ToString(), out multiplier);
+
+                        double offset = 0.0;
+                        if (row.ContainsKey("偏移") && row["偏移"] != null) double.TryParse(row["偏移"].ToString(), out offset);
+                        // 🟢 新增：解析表达式
+                        string expression = row.ContainsKey("表达式") ? row["表达式"]?.ToString()?.Trim() ?? "" : "";
+
+                        var newPoint = new PointConfig
                     {
                         PointId = $"PT_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}",
                         PointName = row["点位名称"].ToString().Trim(),
                         Address = row.ContainsKey("寄存器地址") ? row["寄存器地址"]?.ToString()?.Trim() ?? "" : "",
                         DataType = dataType,
-                        Length = length
-                    };
+                        Length = length,
+                            Multiplier = multiplier, // 🟢 补上这一行！
+                            Offset = offset ,         // 🟢 补上这一行！
+                            Expression = expression  // 🟢 赋值表达式
+                        };
 
                         tempDeviceDict[aggregateKey].Points.Add(newPoint);
                         addedPointsCount++;

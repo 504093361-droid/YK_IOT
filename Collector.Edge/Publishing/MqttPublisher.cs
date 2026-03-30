@@ -11,7 +11,7 @@ namespace Collector.Edge.Publishing
 {
     public interface IMqttPublisher
     {
-        Task PublishRawDataAsync(RawMessage message);
+        Task PublishPointDataAsync(StandardPointData message);
         Task PublishDeviceStatusAsync(string deviceId, string status,int statuscode);
     }
 
@@ -26,11 +26,11 @@ namespace Collector.Edge.Publishing
             _mqttService = mqttService;
         }
 
-        public async Task PublishRawDataAsync(RawMessage message)
+        public async Task PublishPointDataAsync(StandardPointData message)
         {
             try
             {
-                string topic = CollectorTopics.GetDeviceRawDataTopic(message.DeviceId);
+                string topic = CollectorTopics.GetDeviceStandDataTopic(message.DeviceId);
                 string payload = JsonSerializer.Serialize(message);
 
                 // 🟢 真正调用发布，并获取返回值
@@ -38,7 +38,7 @@ namespace Collector.Edge.Publishing
 
                 if (!result.IsSuccess)
                 {
-                    _logger.LogWarning("[发布底层失败] 点位: {Addr} | 错误: {Err}", message.Address, result.ErrorMessage);
+                    _logger.LogWarning("[发布底层失败] 错误: {Err}", result.ErrorMessage);
                 }
             }
             catch (Exception ex)

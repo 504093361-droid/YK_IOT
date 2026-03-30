@@ -15,8 +15,8 @@ namespace Collector.Contracts.Topics
 
         // 3. 动态模板：通过方法生成针对特定设备的主题 (如：设备实时数据流)
         // 实际值为: scada/collector/data/PLC_01/raw
-        public static string GetDeviceRawDataTopic(string deviceId)
-            => $"{Root}/data/{deviceId}/raw";
+        public static string GetDeviceStandDataTopic(string deviceId)
+            => $"{Root}/data/{deviceId}/standard";
 
         // 4. 设备在线状态主题 (遗嘱消息/上下线通知)
         // 实际值为: scada/collector/status/PLC_01

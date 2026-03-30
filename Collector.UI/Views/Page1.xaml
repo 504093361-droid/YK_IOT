@@ -133,7 +133,12 @@
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
                         <DataGridTextColumn Header="端口" Binding="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Width="70" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-                        <DataGridTextColumn Header="扫描(ms)" Binding="{Binding ScanIntervalMs, UpdateSourceTrigger=PropertyChanged}" Width="70" 
+
+                  
+
+                     
+
+                        <DataGridTextColumn Header="扫描(ms)" Binding="{Binding ScanIntervalMs, UpdateSourceTrigger=PropertyChanged}" Width="75" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
                         <DataGridTemplateColumn Header="操作" Width="80"  >
                             <DataGridTemplateColumn.CellTemplate>
@@ -212,7 +217,7 @@
                     <DataGridComboBoxColumn Header="数据类型" 
                                             SelectedItemBinding="{Binding DataType, UpdateSourceTrigger=PropertyChanged}" 
                                             ItemsSource="{Binding Source={StaticResource DataTypeEnumProvider}}" 
-                                            Width="100" />
+                                            Width="80" />
                     <DataGridTextColumn Header="长度" Binding="{Binding Length, UpdateSourceTrigger=PropertyChanged}" Width="60">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource GridTextBlockStyle}">
@@ -240,20 +245,46 @@
                             </Style>
                         </DataGridTextColumn.EditingElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="当前值" Width="90">
+                
+                    <DataGridTextColumn Header="比例(k)" Binding="{Binding Multiplier, UpdateSourceTrigger=PropertyChanged}" Width="60"
+                    ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="ToolTip" Value="线性转换因子：y = kx + b 中的 k (默认1.0)"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="偏移(b)" Binding="{Binding Offset, UpdateSourceTrigger=PropertyChanged}" Width="60"
+                    ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="ToolTip" Value="线性转换因子：y = kx + b 中的 b (默认0.0)"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+                   
+                    <DataGridTextColumn Header="公式" Binding="{Binding Expression, UpdateSourceTrigger=PropertyChanged}" Width="110"
+                    ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="ToolTip" Value="支持高级数学公式，例如: Pow(x, 2) + Sin(x)。配置此项后，比例和偏移将失效。"/>
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Header="原始值" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding CurrentValue}" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="6,0">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="#409EFF"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSuccess}" Value="False">
-                                                    <Setter Property="Foreground" Value="#F56C6C"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
+                                <TextBlock Text="{Binding RawValue}" Foreground="#909399" FontSize="12" VerticalAlignment="Center" Margin="6,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="当前值" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ProcessedValue}" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="6,0">
                                 </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

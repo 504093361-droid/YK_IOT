@@ -111,8 +111,11 @@ namespace Collector.Edge.Engine
                     }
 
                     // 发送点位数据
-                    RawMessage rawMessage = _processor.ProcessRawData(_device, point, readResult);
-                    await _publisher.PublishRawDataAsync(rawMessage);
+                    //   RawMessage rawMessage = _processor.ProcessRawData(_device, point, readResult);
+                    StandardPointData processedData = _processor.Process(_device, point, readResult);
+                    //await _publisher.PublishRawDataAsync(rawMessage);
+                    await _publisher.PublishPointDataAsync(processedData);
+
                 }
 
                 // 🟢 2. 核心诊断：这一轮扫完后，评估设备的宏观健康状态
