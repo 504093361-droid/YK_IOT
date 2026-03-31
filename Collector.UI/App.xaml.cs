@@ -83,7 +83,7 @@ namespace Collector.UI
 
 #if DEBUG
 
-      
+           
             mainview.WindowState = WindowState.Normal;
 
 #elif !DEBUG

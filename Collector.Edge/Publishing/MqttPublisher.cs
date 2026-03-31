@@ -34,7 +34,7 @@ namespace Collector.Edge.Publishing
                 string payload = JsonSerializer.Serialize(message);
 
                 // 🟢 真正调用发布，并获取返回值
-                var result = await _mqttService.PublishAsync(topic, payload, retain: false);
+                var result = await _mqttService.PublishAsync(topic, payload, retain: true);
 
                 if (!result.IsSuccess)
                 {
@@ -71,7 +71,7 @@ namespace Collector.Edge.Publishing
 
                 if (result.IsSuccess)
                 {
-                    _logger.LogInformation("📢 [状态更新] 设备: {Id} -> {Status}", deviceId, status);
+                    _logger.LogDebug("📢 [状态更新] 设备: {Id} -> {Status}", deviceId, status);
                 }
             }
             catch (Exception ex)

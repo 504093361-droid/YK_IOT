@@ -27,6 +27,13 @@ namespace Collector.Contracts
         [ObservableProperty]
         private ObservableCollection<PointConfig> points = new();
 
+        // 🟢 新增：Modbus 大小端字节序配置 (默认 CDAB 是大多数国内设备的标准)
+        [ObservableProperty]
+        private DataFormatEnum _dataFormat = DataFormatEnum.CDAB;
+
+        // 🟢 新增：首地址是否从 0 开始 (默认 true，也是标准做法)
+        [ObservableProperty]
+        private bool _isAddressStartWithZero = true;
 
         // 👇 观察窗专属字段：标识 Edge 端的 Worker 状态 👇
         // 例如："在线/采集中", "离线/断开", "异常停止"

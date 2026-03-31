@@ -279,8 +279,8 @@ namespace Collector.UI.ViewModel
                 if (_isEdgeConsideredOffline || _lastEdgeMessageTime == DateTime.MinValue)
                     continue;
 
-                // 🟢 判定生死线：如果当前时间距离最后一次收到数据超过了 15 秒！
-                if ((DateTime.Now - _lastEdgeMessageTime).TotalSeconds > 30)
+                // 🟢 判定生死线：如果当前时间距离最后一次收到数据超过了 60秒！
+                if ((DateTime.Now - _lastEdgeMessageTime).TotalSeconds > 60)
                 {
                     _isEdgeConsideredOffline = true; // 标记为已死
 
@@ -543,12 +543,15 @@ namespace Collector.UI.ViewModel
             {
                     // 🟢 构造工业级平铺模板，展示了如何把同设备的点位写在一起
                     var template = new[]
-                   {
-                new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="192.168.0.10", 端口=102, 扫描周期=1000, 点位名称="实际温度", 寄存器地址="MD100", 数据类型="Float", 长度=0, 比例=0.1, 偏移=-50.0, 表达式="x * 1.5 + 10" },
-                new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="192.168.0.10", 端口=102, 扫描周期=1000, 点位名称="运行状态", 寄存器地址="M10.0", 数据类型="Bool", 长度=0, 比例=1.0, 偏移=0.0, 表达式="" },
-                new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="192.168.0.20", 端口=502, 扫描周期=500, 点位名称="当前电压", 寄存器地址="100", 数据类型="Int", 长度=0, 比例=1.0, 偏移=0.0, 表达式="" },
-                new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="192.168.0.20", 端口=502, 扫描周期=500, 点位名称="产品条码", 寄存器地址="200", 数据类型="String", 长度=10, 比例=1.0, 偏移=0.0, 表达式="" }
-            };
+        {
+    new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="127.0.0.1", 端口=102, 扫描周期=500, 点位名称="实际温度1", 寄存器地址="M100", 数据类型="Short", 长度=0, 比例=0.1, 偏移=-50.0, 表达式="x * 1.5 + 10", 死区=0.5, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" },
+    new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="127.0.0.1", 端口=102, 扫描周期=500, 点位名称="实际温度2", 寄存器地址="M110", 数据类型="Int", 长度=0, 比例=1.0, 偏移=0.0, 表达式="", 死区=0.0, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" },
+    new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="127.0.0.1", 端口=102, 扫描周期=500, 点位名称="实际温度3", 寄存器地址="M120", 数据类型="Float", 长度=0, 比例=1.0, 偏移=0.0, 表达式="", 死区=0.0, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" },
+    new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="127.0.0.1", 端口=102, 扫描周期=500, 点位名称="实际温度4", 寄存器地址="M130", 数据类型="Int", 长度=0, 比例=1.0, 偏移=0.0, 表达式="", 死区=0.0, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" },
+    new { 所属车间="配料车间", 设备名称="1号产线_西门子", 协议类型="S71200", IP地址="127.0.0.1", 端口=102, 扫描周期=500, 点位名称="运行状态", 寄存器地址="M140", 数据类型="Bool", 长度=0, 比例=1.0, 偏移=0.0, 表达式="", 死区=0.0, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" },
+    new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="127.0.0.1", 端口=502, 扫描周期=500, 点位名称="当前电压", 寄存器地址="100", 数据类型="Int", 长度=0, 比例=1.0, 偏移=0.0, 表达式="", 死区=0.5, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" },
+    new { 所属车间="封膜车间", 设备名称="2号_Modbus电表", 协议类型="ModbusTCP", IP地址="127.0.0.1", 端口=502, 扫描周期=500, 点位名称="产品条码", 寄存器地址="200", 数据类型="String", 长度=10, 比例=1.0, 偏移=0.0, 表达式="", 死区=0.5, 点位周期=1000, 字节序="CDAB", 地址从0开始="True" }
+};
 
                     MiniExcel.SaveAs(saveFileDialog.FileName, template);
                 Growl.Success("模板下载成功！请严格按照模板的列名填写。");
@@ -652,6 +655,15 @@ namespace Collector.UI.ViewModel
                         // 🟢 新增：解析表达式
                         string expression = row.ContainsKey("表达式") ? row["表达式"]?.ToString()?.Trim() ?? "" : "";
 
+                        // 🟢 新增：死区解析
+                        double deadband = 0.0;
+                        if (row.ContainsKey("死区") && row["死区"] != null) double.TryParse(row["死区"].ToString(), out deadband);
+
+                        // 🟢 解析点位周期 (防呆默认给 1000)
+                        int pointInterval = 1000;
+                        if (row.ContainsKey("点位周期") && row["点位周期"] != null) int.TryParse(row["点位周期"].ToString(), out pointInterval);
+
+
                         var newPoint = new PointConfig
                     {
                         PointId = $"PT_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}",
@@ -661,7 +673,11 @@ namespace Collector.UI.ViewModel
                         Length = length,
                             Multiplier = multiplier, // 🟢 补上这一行！
                             Offset = offset ,         // 🟢 补上这一行！
-                            Expression = expression  // 🟢 赋值表达式
+                            Expression = expression,  // 🟢 赋值表达式
+                            Deadband = deadband, // 🟢 赋值死区
+                            ScanIntervalMs = pointInterval // 🟢 赋值点位周期
+
+
                         };
 
                         tempDeviceDict[aggregateKey].Points.Add(newPoint);

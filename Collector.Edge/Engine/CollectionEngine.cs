@@ -18,8 +18,11 @@
             private readonly ILoggerFactory _loggerFactory; // 注意：这里注入工厂， 为了给每个 Worker 单独发一个日志记录器
             private readonly ILogger<CollectionEngine> _logger;
 
-            // 核心花名册：记录当前正在干活的所有工人 (Key: DeviceId, Value: Worker实例)
-            private readonly ConcurrentDictionary<string, DeviceCollectWorker> _workers = new();
+        // 🟢 全局并发控制器：全厂最多允许 50 个并发网络 IO！(具体数值可配)
+        private readonly SemaphoreSlim _globalConcurrencyLock = new SemaphoreSlim(20, 20);
+
+        // 核心花名册：记录当前正在干活的所有工人 (Key: DeviceId, Value: Worker实例)
+        private readonly ConcurrentDictionary<string, DeviceCollectWorker> _workers = new();
 
             public CollectionEngine(
                 IConfigManager configManager,
@@ -82,9 +85,10 @@
                 foreach (var deviceConfig in configs)
                 {
                     var workerLogger = _loggerFactory.CreateLogger<DeviceCollectWorker>();
-                    var worker = new DeviceCollectWorker(deviceConfig, _processor, _publisher, workerLogger);
+                // 🟢 把全局锁发给每一个工人
+                var worker = new DeviceCollectWorker(deviceConfig, _processor, _publisher, workerLogger, _globalConcurrencyLock);
 
-                    if (_workers.TryAdd(deviceConfig.DeviceId, worker))
+                if (_workers.TryAdd(deviceConfig.DeviceId, worker))
                     {
                        
                         worker.Start();

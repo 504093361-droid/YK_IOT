@@ -49,7 +49,36 @@ namespace Collector.Edge.Processing
                 msg.ProcessedValue = "Transform_Failed";
             }
 
+            // 🟢 4. 终极质检：死区过滤与差异比对
+            msg.HasChanged = CheckIfValueChanged(point, msg.ProcessedValue);
+
+            // 如果确认发生了有效跳变，或者发生了异常，更新内存里的“上一次发布值”
+            if (msg.HasChanged || !msg.IsSuccess)
+            {
+                point.LastPublishedValue = msg.ProcessedValue;
+            }
+
             return msg;
+        }
+
+        // 🟢 新增的死区比对裁判官
+        private bool CheckIfValueChanged(PointConfig point, object? newValue)
+        {
+            // 如果任何一个是 null（比如第一次读取，或者断线了），强制认为发生了跳变
+            if (newValue == null || point.LastPublishedValue == null) return true;
+
+            // 1. 如果是数值类型，进行【死区比对】
+            if (IsNumericType(newValue) && IsNumericType(point.LastPublishedValue))
+            {
+                double current = Convert.ToDouble(newValue);
+                double last = Convert.ToDouble(point.LastPublishedValue);
+
+                // 只有当差值的绝对值 > 设定的死区阈值时，才算发生了跳变
+                return Math.Abs(current - last) > point.Deadband;
+            }
+
+            // 2. 如果是布尔或字符串等非数值类型，直接进行【全等比对】
+            return !newValue.Equals(point.LastPublishedValue);
         }
 
         // 🟢 核心转换引擎

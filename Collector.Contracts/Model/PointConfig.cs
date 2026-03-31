@@ -36,7 +36,35 @@ namespace Collector.Contracts
         [ObservableProperty]
         private string _expression = string.Empty; // 动态公式 (例如: "x * 2 + Sin(x)")
 
+
+        // 🟢 新增：死区过滤阈值 (绝对值)。例如设为 0.5，则变化范围在 ±0.5 内的数据将被抛弃
+        [ObservableProperty]
+        private double _deadband = 0.0;
+
+        // 🟢 新增：当前点位的独立采集周期 (默认1000毫秒)
+        [ObservableProperty]
+        private int _scanIntervalMs = 1000;
+
+
+
+
+
+
+
+
+
         // 👇 观察窗专属字段 👇
+
+
+        // 🟢 新增：内部秒表，记录当前点位上一次真实去读 PLC 的时间
+        [property: JsonIgnore]
+        public DateTime LastScanTime { get; set; } = DateTime.MinValue;
+
+        // 🟢 新增：记忆上一次真正发往 Broker 的值 (用于死区比对)
+        [property: JsonIgnore]
+        [ObservableProperty]
+        private object? _lastPublishedValue;
+
 
         [property: JsonIgnore]
         [ObservableProperty]
