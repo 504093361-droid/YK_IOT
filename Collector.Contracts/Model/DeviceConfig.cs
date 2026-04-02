@@ -35,6 +35,12 @@ namespace Collector.Contracts
         [ObservableProperty]
         private bool _isAddressStartWithZero = true;
 
+        /// <summary>
+        /// 站号 / 从站地址 (Slave ID)
+        /// 默认通常为 1。在使用串口服务器透传多个子设备时极其重要！
+        /// </summary>
+        public byte Station { get; set; } = 1;
+
         // 👇 观察窗专属字段：标识 Edge 端的 Worker 状态 👇
         // 例如："在线/采集中", "离线/断开", "异常停止"
         [property: JsonIgnore]

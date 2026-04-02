@@ -174,7 +174,8 @@
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
                         <DataGridTextColumn Header="端口" Binding="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Width="80" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
-
+                        <DataGridTextColumn Header="站号" Binding="{Binding Station, UpdateSourceTrigger=PropertyChanged}" Width="50" 
+                     ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
                         <DataGridTextColumn Header="怠速扫描(ms)" Binding="{Binding ScanIntervalMs, UpdateSourceTrigger=PropertyChanged}" Width="90" 
                                             ElementStyle="{StaticResource GridTextBlockStyle}" EditingElementStyle="{StaticResource GridTextBoxStyle}"/>
 
