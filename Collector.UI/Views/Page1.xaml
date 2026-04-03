@@ -121,6 +121,7 @@
                           SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
                           AutoGenerateColumns="False" CanUserAddRows="False" 
                           RowDetailsVisibilityMode="VisibleWhenSelected"
+                             PreviewMouseLeftButtonDown="DataGrid_PreviewMouseLeftButtonDown"
                           Background="White" RowHeight="30" ColumnHeaderHeight="32" FontSize="12"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#EBEEF5"
                           BorderThickness="1" BorderBrush="#E4E7ED"
@@ -128,7 +129,9 @@
 
                     <DataGrid.RowDetailsTemplate>
                         <DataTemplate>
-                            <Border Background="#F4F8FE" Padding="25,12" BorderThickness="0,1,0,1" BorderBrush="#DCDFE6">
+
+                            <StackPanel Orientation="Vertical">
+                                  <Border Background="#F4F8FE" Padding="25,12" BorderThickness="0,1,0,1" BorderBrush="#DCDFE6">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -155,6 +158,39 @@
                                     </StackPanel>
                                 </WrapPanel>
                             </Border>
+                                  <Border Background="#FDF6EC" Padding="25,12" BorderThickness="0,1,0,1" BorderBrush="#DCDFE6">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ProtocolType}" Value="{x:Static models:ProtocolTypeEnum.OPC_UA}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🛡️ OPC UA 安全与路由配置：" FontWeight="Bold" Foreground="#E6A23C" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,25,0">
+                                            <TextBlock Text="端点路由(/):" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#606266"/>
+                                            <TextBox Text="{Binding OpcEndpointPath, UpdateSourceTrigger=PropertyChanged}" Width="200" Height="26" ToolTip="例如 /UA/Server，留空则为根路径"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,25,0">
+                                            <TextBlock Text="用户名:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#606266"/>
+                                            <TextBox Text="{Binding OpcUsername, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="26" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                                            <TextBlock Text="密码:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#606266"/>
+                                            <TextBox Text="{Binding OpcPassword, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="26" />
+                                        </StackPanel>
+                                    </WrapPanel>
+                                </Border>
+                            </StackPanel>
+                          
+                       
+         
                         </DataTemplate>
                     </DataGrid.RowDetailsTemplate>
 
@@ -248,6 +284,7 @@
                       RowDetailsVisibilityMode="VisibleWhenSelected"
                       Background="White" RowHeight="30" ColumnHeaderHeight="32" FontSize="12"
                       GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#EBEEF5"
+                     PreviewMouseLeftButtonDown="DataGrid_PreviewMouseLeftButtonDown"
                       BorderThickness="1" BorderBrush="#E4E7ED"
                       HeadersVisibility="Column">
 
@@ -320,7 +357,7 @@
                         </DataGridTextColumn.HeaderStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="底层原始值" Width="100">
+                    <DataGridTemplateColumn Header="生肉" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding RawValue}" Foreground="#909399" FontSize="12" VerticalAlignment="Center" Margin="6,0"/>
@@ -328,12 +365,12 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="熟肉当前值" Width="120">
+                    <DataGridTemplateColumn Header="熟肉" Width="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding ProcessedValue}" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="6,0">
                                     <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
+                                        <Style TargetType="TextBlock"> 
                                             <Setter Property="Foreground" Value="#409EFF"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSuccess}" Value="False">

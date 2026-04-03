@@ -17,6 +17,10 @@ namespace Collector.Contracts.Model
         public int PointMaxRetryBeforeQuarantine { get; set; } = 3;   // 点位连续错几次关禁闭
         public int PointQuarantineDurationSeconds { get; set; } = 60; // 禁闭时长
 
+        public int PublisherCapacity { get; set; } = 50000; // 发布器缓冲区容量，超过后丢弃最老数据
+        public int PublisherChannelReadderCount { get; set; } = 200;// 发布器消费者数量，越多吞吐越高，但也越占资源，需根据实际情况调整
+
+        public int PublisherIntervalMilliSeconds { get; set; } = 500; // 发布器批量发送的时间间隔(ms)，过短可能导致频繁网络请求，过长可能增加数据延迟
 
         // 心跳与保活
         public int HeartbeatIntervalSeconds { get; set; } = 30; // 强制上报心跳的时间间隔(秒)

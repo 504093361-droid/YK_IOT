@@ -4,6 +4,7 @@ using Collector.Contracts.Model;
 using Collector.Contracts.Topics;
 using Collector.Edge.Processing;
 using Collector.Edge.Publishing;
+using Contracts.Interface;
 using HslCommunication;
 using HslCommunication.Core.Device;
 using HslCommunication.Core.Net;
@@ -23,7 +24,7 @@ namespace Collector.Edge.Engine
     /// 🚀 工业级设备采集核心引擎 (Worker)
     /// 【架构设计】：每个独立设备对应一个独立实例。内置双通道采集机制、断线熔断、点位级故障隔离、差异化防抖发布。
     /// </summary>
-    public class DeviceCollectWorker
+    public class PollingCollectWorker: ICollectWorker
     {
         // 基础服务注入
         private readonly DeviceConfig _device;
@@ -69,7 +70,7 @@ namespace Collector.Edge.Engine
         private readonly Dictionary<string, string> _lastErrorCache = new();
 
 
-        public DeviceCollectWorker(
+        public PollingCollectWorker(
             DeviceConfig device,
             IDataProcessor processor,
             IMqttPublisher publisher,
@@ -85,7 +86,7 @@ namespace Collector.Edge.Engine
             _sysOptions = sysOptions;
         }
 
-        public void Start()
+        public async Task StartAsync()
         {
             _logger.LogInformation("准备启动设备 [{DeviceName}] 的采集 Worker...", _device.DeviceName);
 

@@ -1,19 +1,7 @@
-﻿using Collector.UI.ViewModel;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Collector.UI.Views
 {
@@ -27,5 +15,44 @@ namespace Collector.UI.Views
             InitializeComponent();
 
         }
+
+        private void DataGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not DataGrid dataGrid)
+                return;
+
+            if (e.OriginalSource is not DependencyObject source)
+                return;
+
+            if (FindParent<DataGridRow>(source) != null ||
+                FindParent<DataGridCell>(source) != null)
+            {
+                return;
+            }
+
+            dataGrid.UnselectAll();
+            dataGrid.SelectedItem = null;
+            Keyboard.ClearFocus();
+        }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            while (child != null)
+            {
+                if (child is T target)
+                    return target;
+
+                child = VisualTreeHelper.GetParent(child);
+            }
+
+            return null;
+        }
+
+
+
+
+
+
+
     }
 }

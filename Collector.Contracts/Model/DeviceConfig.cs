@@ -27,6 +27,9 @@ namespace Collector.Contracts
         [ObservableProperty]
         private ObservableCollection<PointConfig> points = new();
 
+        // =========================================
+        // 🔧 Modbus 专属高级配置
+        // =========================================
         // 🟢 新增：Modbus 大小端字节序配置 (默认 CDAB 是大多数国内设备的标准)
         [ObservableProperty]
         private DataFormatEnum _dataFormat = DataFormatEnum.CDAB;
@@ -41,7 +44,33 @@ namespace Collector.Contracts
         /// </summary>
         public byte Station { get; set; } = 1;
 
+
+        // =========================================
+        // 🛡️ OPC UA 专属高级配置
+        // =========================================
+        /// <summary>
+        /// OPC UA 端点路由后缀 (例如 /UA/Server，留空则代表根路径)
+        /// </summary>
+        [ObservableProperty]
+        private string _opcEndpointPath = "";
+
+        /// <summary>
+        /// OPC UA 认证用户名 (留空代表匿名登录)
+        /// </summary>
+        [ObservableProperty]
+        private string _opcUsername = "";
+
+        /// <summary>
+        /// OPC UA 认证密码
+        /// </summary>
+        [ObservableProperty]
+        private string _opcPassword = "";
+
+
+        // =========================================
         // 👇 观察窗专属字段：标识 Edge 端的 Worker 状态 👇
+        // =========================================
+
         // 例如："在线/采集中", "离线/断开", "异常停止"
         [property: JsonIgnore]
         [ObservableProperty]
